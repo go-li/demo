@@ -1,3 +1,5 @@
+// run this on playground: http://tsoh.host/test.html
+// the generic copy demo
 package main
 
 func nocopy0(a *, b *) {
