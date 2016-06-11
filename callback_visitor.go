@@ -18,10 +18,10 @@ func visit(visitor func(*), obj *) {
 
 func main() {
 	var a,b,c = 1,2,3
-	macro_visit(set7_visitor, &b)
-	macro_visit(print_visitor, &a)
-	macro_visit(print_visitor, &c)
-	macro_visit(print_visitor, &c)
-	macro_visit(print_visitor, &b)
+	visit(set7_visitor, &b)
+	visit(print_visitor, &a)
+	visit(print_visitor, &c)
+	visit(print_visitor, &c)
+	visit(print_visitor, &b)
 	
 }
