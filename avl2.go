@@ -484,9 +484,9 @@ type MyValue struct {
 }
 
 type StringNode struct {
-	pavl_link [3]*Node /* Subtrees. */
+	pavl_link [3]*StringNode /* Subtrees. */
 	keybal    [32]byte
-	pavl_data *MyValue /* key itself. */
+	pavl_data *MyValue /* value itself. */
 }
 
 func main() {
