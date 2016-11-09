@@ -465,8 +465,8 @@ func Preorder(unused *, tree **Node, visit func(*)) {
 		p = p.pavl_link[2]
 	}
 
-	var x = string(p.keybal[:31])
-	print(x)
+//	var x = string(p.keybal[:31])
+//	print(x)
 	visit(p.pavl_data)
 
 	if p.pavl_link[1] != nil {
