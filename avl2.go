@@ -211,7 +211,7 @@ func Probe(value *, tree **Node, key []byte, result **) {
 
 /* Deletes from |tree| and returns an item matching |item|.
    Returns a null pointer if no matching item found. */
-func Drop(tree **Node, key []byte, result **) {
+func Drop(result **, tree **Node, key []byte) {
 
 	var p *Node /* Traverses tree to find node to delete. */
 	var q *Node /* Parent of |p|. */
@@ -490,7 +490,8 @@ type StringNode struct {
 }
 
 func main() {
-
+	var null **MyValue
+	var nill *MyValue
 	var root *StringNode
 
 	Probe(&MyValue{"Paul Sartorius"}, &root, Pad([]byte("composer")), nil)
@@ -508,16 +509,18 @@ func main() {
 	Probe(&MyValue{"Tim Cook"}, &root, Pad([]byte("cook")), nil)
 	Probe(&MyValue{"David Griswold"}, &root, Pad([]byte("cashier")), nil)
 
-	Preorder(nil, &root, func(value *MyValue) {
+	Preorder(nill, &root, func(value *MyValue) {
 		print(value.str)
 		print("\n")
 	})
 	print("\n")
 
-	Drop(&root, Pad([]byte("accountant")), nil)
-	Drop(&root, Pad([]byte("developer")), nil)
 
-	Preorder(nil, &root, func(value *MyValue) {
+
+	Drop(null, &root, Pad([]byte("accountant")))
+	Drop(null, &root, Pad([]byte("developer")))
+
+	Preorder(nill, &root, func(value *MyValue) {
 		print(value.str)
 		print("\n")
 	})

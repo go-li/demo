@@ -1,6 +1,6 @@
 package main
 
-func macro_sort(  fun func(*,*), sli []int) {
+func macro_sort(  fun func(*,*), sli []) {
 	var i int
 	var j int
 	for i = 0; i < len(sli); i++ {
@@ -21,6 +21,7 @@ func main() {
 	macro_sort(bubble_ints, stax)
 	for i := range stax {
 	print(stax[i])
-	print("-")
+	print(",")
 	}
+	println()
 }

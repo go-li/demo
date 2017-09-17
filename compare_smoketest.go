@@ -16,8 +16,7 @@ func String(a, b *string) int {
 }
 
 func Compare2(cmp func(*,*)(int), l *,r *) {
-	print(What(cmp(l,r)))
-	print("\n")
+	println(What(cmp(l,r)))
 }
 
 func What(n int) string {
@@ -31,10 +30,13 @@ func What(n int) string {
 
 func main() {
 	s := []string{"foo","bar","gg","zz","aa","bb","cc","cc"}
+
+	var one = 1
+	var two = 2
 	
 	Compare2(String, &s[0], &s[1])
 	Compare2(String, &s[2], &s[3])
 	Compare2(String, &s[4], &s[5])
 	Compare2(String, &s[6], &s[7])
-	
+	Compare2(Int, &one, &two)
 }

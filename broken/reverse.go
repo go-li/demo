@@ -4,7 +4,11 @@ func reverse(slice [] ) {
 	var l = len(slice)
 	for i := 0 ; i < l/2; i++  {
 		var j = l-i-1
-		slice[i], slice[j] = slice[j], slice[i]
+
+		var si = &slice[i]
+		var sj = &slice[j]
+
+		*si, *sj = *sj, *si
 	}
 }
 

@@ -1,4 +1,3 @@
-//to run in playground, please visit: http://tsoh.host/test.html
 
 package main
 

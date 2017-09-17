@@ -1,15 +1,15 @@
 package main
 
-import (
-	"fmt"
-)
-
 func set7_visitor(num *int) {
-           fmt.Printf("I am: ")
+           print("I am: ")
            *num = 7
 }
 func print_visitor(num *int) {
-        fmt.Printf("%d", *num)
+        print(*num)
+}
+
+func newline_visitor(num *int) {
+	println("")
 }
    
 func visit(visitor func(*), obj *) {
@@ -23,5 +23,5 @@ func main() {
 	visit(print_visitor, &c)
 	visit(print_visitor, &c)
 	visit(print_visitor, &b)
-	
+	visit(newline_visitor, &b)
 }

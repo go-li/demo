@@ -1,9 +1,33 @@
 package main
 
-func (hi *) Foo(i int) {
-	print("FOO")
+type template struct {
+	thing *
+}
+
+type foo struct {
+	thing *int
+}
+
+func DoFoo(t *template, i *) {
+	t.Foo(i)
+}
+
+func (hi *template) Foo(i *) {
+	hi.thing = i
 }
 
 func main() {
-	(&i).Foo(3)
+
+	var x int = 99999
+//	var y int = 37
+	var a foo
+
+
+	DoFoo(&a, &x)
+
+	print(*(a.thing))
+
+//	(&a).Foo(&y)
+
+//	print(*(a.thing))
 }

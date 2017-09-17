@@ -1,6 +1,6 @@
 package main
 
-func macro_ref_divergence(a, b *) {
+func macro_ref_divergence(a *, b *) {
 	print("hello")
 	macro_ref_divergence(&a, &b)
 }

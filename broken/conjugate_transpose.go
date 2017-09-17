@@ -8,7 +8,7 @@ func ConjCmplx(n *complex128) {
 	*n = complex(real(*n), -imag(*n))
 }
 
-func ConjugateTranspose2x2(conj func(*), mat *[2][2]complex128) {
+func ConjugateTranspose2x2(conj func(*), mat *[2][2]) {
 	(*mat)[0][1], (*mat)[1][0] = (*mat)[1][0], (*mat)[0][1]
 	
 	if conj!=nil {
