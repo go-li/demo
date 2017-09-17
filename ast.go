@@ -1,9 +1,14 @@
 package main
 
+func b(arg string) []byte {
+	return []byte(arg)
+}
+
+//
+
 type RootBloc struct {
 	fil []*FileBloc
 }
-
 
 
 // file block aka single sourcecode file
@@ -17,14 +22,14 @@ type FileBloc struct {
 
 // toplevel package statement
 type PkgSment struct {
-	pkg string
+	pkg []byte // string
 }
 
 
 
 // toplevel import statement
 type ImpSment struct {
-	path string
+	path []byte // string
 }
 
 
@@ -37,7 +42,7 @@ type FunSment struct {
 	args byte
 	rets byte
 
-	name string
+	name []byte // string
 }
 
 
@@ -49,8 +54,8 @@ type TyIDitem struct {
 
 	dadkind byte
 
-	name string
-	typ string
+	name []byte // string
+	typ []byte // string
 }
 
 // typedef struct statement
@@ -59,7 +64,7 @@ type TypStrct struct {
 
 	rows byte
 
-	typename string
+	typename []byte // string
 }
 
 
@@ -176,23 +181,23 @@ func main() {
 
 	root.fil = append(root.fil, &file)
 
-	file.pkg = &PkgSment{pkg:"main"}
-	file.imp = append(file.imp, &ImpSment{path:`"fmt"`})
-	file.fun = append(file.fun, &FunSment{name:"Whatever1"})
-	file.fun = append(file.fun, &FunSment{name:"Something2"})
-	file.fun = append(file.fun, &FunSment{name:"Anything3"})
-	file.fun = append(file.fun, &FunSment{name:"Funfun",recv:1,args:2,rets:2,
-		arg:[]*TyIDitem{&TyIDitem{name:"foo",typ:"bar",dadkind:KindFunSment},
-			&TyIDitem{name:"boo",typ:"baz",dadkind:KindFunSment},
-			&TyIDitem{name:"coo",typ:"caz",dadkind:KindFunSment},
-			&TyIDitem{name:"doo",typ:"daz",dadkind:KindFunSment},
-			&TyIDitem{name:"eoo",typ:"eaz",dadkind:KindFunSment}}})
-	file.tds = append(file.tds, &TypStrct{typename:"Wow",rows:5,
-		row:[]*TyIDitem{&TyIDitem{name:"foo",typ:"bar",dadkind:KindTypStrct},
-			&TyIDitem{name:"boo",typ:"baz",dadkind:KindTypStrct},
-			&TyIDitem{name:"coo",typ:"caz",dadkind:KindTypStrct},
-			&TyIDitem{name:"doo",typ:"daz",dadkind:KindTypStrct},
-			&TyIDitem{name:"eoo",typ:"eaz",dadkind:KindTypStrct}}})
+	file.pkg = &PkgSment{pkg:b("main")}
+	file.imp = append(file.imp, &ImpSment{path:b(`"fmt"`)})
+	file.fun = append(file.fun, &FunSment{name:b("Whatever1")})
+	file.fun = append(file.fun, &FunSment{name:b("Something2")})
+	file.fun = append(file.fun, &FunSment{name:b("Anything3")})
+	file.fun = append(file.fun, &FunSment{name:b("Funfun"),recv:1,args:2,rets:2,
+		arg:[]*TyIDitem{&TyIDitem{name:b("foo"),typ:b("bar"),dadkind:KindFunSment},
+			&TyIDitem{name:b("boo"),typ:b("baz"),dadkind:KindFunSment},
+			&TyIDitem{name:b("coo"),typ:b("caz"),dadkind:KindFunSment},
+			&TyIDitem{name:b("doo"),typ:b("daz"),dadkind:KindFunSment},
+			&TyIDitem{name:b("eoo"),typ:b("eaz"),dadkind:KindFunSment}}})
+	file.tds = append(file.tds, &TypStrct{typename:b("Wow"),rows:5,
+		row:[]*TyIDitem{&TyIDitem{name:b("foo"),typ:b("bar"),dadkind:KindTypStrct},
+			&TyIDitem{name:b("boo"),typ:b("baz"),dadkind:KindTypStrct},
+			&TyIDitem{name:b("coo"),typ:b("caz"),dadkind:KindTypStrct},
+			&TyIDitem{name:b("doo"),typ:b("daz"),dadkind:KindTypStrct},
+			&TyIDitem{name:b("eoo"),typ:b("eaz"),dadkind:KindTypStrct}}})
 	file.order = []byte{0,1,3,2,2,2,2}
 
 	// Now we print the AST
@@ -211,8 +216,8 @@ func main() {
 //		println(n.kind)
 
 		switch (n.kind) {
-		case KindPkgSment: print("package "); println(n.ps.pkg)
-		case KindImpSment: print("import "); println(n.is.path)
+		case KindPkgSment: print("package "); println(string(n.ps.pkg))
+		case KindImpSment: print("import "); println(string(n.is.path))
 		case KindFunSment:
 			var i = iter[len(iter)-1]
 
@@ -226,7 +231,7 @@ func main() {
 				if n.fs.recv > 0 {
 					print(") ");
 				}
-				 print(n.fs.name);print("(");
+				 print(string(n.fs.name));print("(");
 			}
 			if (i > int(n.fs.recv)) && (i < int(n.fs.recv)+int(n.fs.args)) {
 				print(", ");
@@ -249,13 +254,13 @@ func main() {
 		case KindTypStrct:
 			var i = iter[len(iter)-1]
 			if i == 0 {
-				print("typedef ");print(n.ts.typename);println(" struct {");print("\t")
+				print("type ");print(string(n.ts.typename));println(" struct {");print("\t")
 			} else if i == len(n.ts.row) {
 				println("");println("}")
 			} else {
-				println(",");print("\t")
+				println("");print("\t")
 			}
-		case KindTyIDitem: print(n.ti.name); print(" "); print(n.ti.typ);
+		case KindTyIDitem: print(string(n.ti.name)); print(" "); print(string(n.ti.typ));
 		}
 
 
