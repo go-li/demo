@@ -953,6 +953,123 @@ func bubble(array [][2]int) {
 	}
 }
 
+type Deletor func(int,int)
+
+func Delete(values []) Deletor {
+
+	if len(values) == 0 {
+		return func(int,int){}
+	}
+
+	return func(i int, j int) {
+
+		var vi *;
+		var vj *;
+
+		vi = &values[i]
+		vj = &values[j]
+
+		*vi = *vj
+
+//		values[i] = values[j]
+	}
+}
+
+func (d Deletor) From(hash func(*, int) uint64, key *, table []) {
+
+	var empty [];
+	empty = make([], 1)
+
+	var void *;
+	void = &empty[0]
+
+	var hvoid = hash(void, -1)
+	var hvacant = hash(void, len(table)-hops)
+
+
+	// next we look if the slot is occupied
+
+	var slot = hash(key, len(table)-hops)
+
+	var location *;
+	location = &table[slot]
+
+	var hloc = hash(location, -1)
+
+	// if it's occupied by a key
+
+	var hkey = hash(key, -1)
+
+	if hloc == hkey {
+		*location = *void
+
+	} else {
+
+	for j := 0; j < hops; j++ {
+
+	// otherwise look at location +1
+
+	slot++
+
+	location = &table[slot]
+
+	hloc = hash(location, -1)
+
+	// if it's occupied by a key
+
+	if hloc == hkey {
+		*location = *void
+		break
+	}
+
+	if hloc == hvoid {
+		return
+	}
+
+	}
+	}
+
+
+	for i := slot + 1 ; (int(i) < len(table)) && (i < slot + hops); i++ {
+
+		var item *;
+
+		item = &table[i]
+
+		var itemloc = hash(item, len(table)-hops)
+
+		if itemloc == hvacant {
+			var itemhash = hash(item, -1)
+			if itemhash == hvoid {
+				return
+			}
+		}
+
+		if itemloc <= slot {
+
+
+//		print("slot=")
+//		print(slot)
+//		print(" i=")
+//		print(i)
+//		print(" itemloc=")
+//		print(itemloc)
+//		println(" FIXING BURST")
+
+		d(int(slot), int(i))
+
+		*location = *item
+		*item = *void
+
+
+		slot = i
+		location = &table[slot]
+		continue
+
+		}
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 func main() {
@@ -1044,7 +1161,7 @@ func main() {
 
 	println(Vacuum(vals).Table(hashfn, keyz, 4))
 
-	Select(hashfn, &[]int{10}[0], keyz).Remove(keyz).Remove(vals)
+	Delete(vals).From(hashfn, &[]int{10}[0], keyz)
 
 	for i := 5; i < 15; i++ {
 		var v *int = Select(hashfn, &i, keyz).From(vals)
@@ -1169,7 +1286,8 @@ func main() {
 
 
 	for j := 500000; j < 1000000; j++ {
-		Select(kvhfunc, &keyval{key:j}, kval).Remove(kval)
+
+		Delete([]struct{}{}).From(kvhfunc, &keyval{key:j}, kval)
 	}
 
 	println(Vacuum([]struct{}{}).Table(kvhfunc, kval, 1))
