@@ -59,7 +59,7 @@ func hashfn(key *int, size int) (o uint64) {
 
 type Selector int
 
-func (f Selector) Delete(table []) (Selector) {
+func (f Selector) Remove(table []) (Selector) {
 
 	if f == -1 {
 		return -1
@@ -1044,7 +1044,7 @@ func main() {
 
 	println(Vacuum(vals).Table(hashfn, keyz, 4))
 
-	Select(hashfn, &[]int{10}[0], keyz).Delete(keyz).Delete(vals)
+	Select(hashfn, &[]int{10}[0], keyz).Remove(keyz).Remove(vals)
 
 	for i := 5; i < 15; i++ {
 		var v *int = Select(hashfn, &i, keyz).From(vals)
@@ -1133,7 +1133,7 @@ func main() {
 	}
 */
 /*
-	Select(kvhfunc, &keyval{key:11}, kval).Delete(kval)
+	Select(kvhfunc, &keyval{key:11}, kval).Remove(kval)
 
 	for i := 2; i < 300; i++ {
 
@@ -1169,7 +1169,7 @@ func main() {
 
 
 	for j := 500000; j < 1000000; j++ {
-		Select(kvhfunc, &keyval{key:j}, kval).Delete(kval)
+		Select(kvhfunc, &keyval{key:j}, kval).Remove(kval)
 	}
 
 	println(Vacuum([]struct{}{}).Table(kvhfunc, kval, 1))
