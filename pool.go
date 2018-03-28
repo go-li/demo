@@ -2,27 +2,21 @@ package main
 
 import "runtime" 
 
-type Pool struct {
+type pool struct {
     pool   chan *
 }
 
 
-// NewPool creates a new pool from one optional item.
-func NewPool(initial *, extra int) (p Pool) {
-	if (initial == nil ) {
-		return Pool{
-			pool: make(chan *, extra),
-		}
+// newPool creates a new pool with max
+func newPool(_ *pool, max int) (p pool) {
+	p = pool{
+		pool: make(chan *, max),
 	}
-	p = Pool{
-		pool: make(chan *, 1+extra),
-	}
-	Return(&p, initial)
 	return p
 }    
 
-// Borrow a Item from the pool.
-func Borrow(p *Pool) (c *) {
+// borrow a Item from the pool.
+func borrow(p *pool) (c *) {
     select {
     case c = <-p.pool:
     default:
@@ -31,8 +25,8 @@ func Borrow(p *Pool) (c *) {
     return c
 }
 
-// Return returns a Item to the pool.
-func Return(p *Pool, c *) {
+// reclaim returns a Item to the pool.
+func reclaim(p *pool, c *) {
     select {
     case p.pool <- c:
     default:
@@ -44,24 +38,29 @@ func Return(p *Pool, c *) {
 // Cl13Nt C0de //////////////////////////////////////////////////
 
 
-type Foo struct {
+type foo struct {
 	 n  int
 }
 
-type FooPool struct {
-	pool   chan *Foo
+type foopool struct {
+	pool   chan *foo
 }
 
 func main() {
-	var left = NewPool(&Foo{1},0)
-	var right = NewPool(nil,1)
+	var l = newPool((*foopool)(nil),1)
+	var r = newPool((*foopool)(nil),1)
+
+	var left foopool = l
+	var right foopool = r
+
+	reclaim(&left, &foo{1})
 
 	go func(){for {
 		print("Take From Right\n");
-		var x = Borrow(&right)
+		var x = borrow(&right)
 		if (x != nil) {
 			print("Put to left\n");
-			Return(&left, x)
+			reclaim(&left, x)
 		} else {
 			runtime.Gosched()
 		}
@@ -69,10 +68,10 @@ func main() {
 	}}()
 	for i := 0; i < 10; i++ {
 		print("Take From Left\n");
-		var x = Borrow(&left)
+		var x = borrow(&left)
 		if (x != nil) {
 			print("Put to right\n");
-			Return(&right, x)
+			reclaim(&right, x)
 		} else {
 			runtime.Gosched()
 		}

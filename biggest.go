@@ -1,10 +1,10 @@
 package main
 
-func CompareInt(a, b *int) int {
+func compareInt(a, b *int) int {
 	return *a - *b
 }
 
-func Max(compar func(*, *) int, items [] /*<-- delete int*/) int {
+func max(compar func(*, *) int, items [] /*<-- delete int*/) int {
 	j := 0
 	for i := range items {
 		var l *;
@@ -28,8 +28,8 @@ func whatIs(j int) {
 
 func main() {
 
-	whatIs(Max(CompareInt, []int{1, 0}));
-	whatIs(Max(CompareInt, []int{1, 2}));
-	whatIs(Max(CompareInt, []int{1, 1, 1}));
+	whatIs(max(compareInt, []int{1, 0}));
+	whatIs(max(compareInt, []int{1, 2}));
+	whatIs(max(compareInt, []int{1, 1, 1}));
 
 }

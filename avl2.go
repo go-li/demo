@@ -1,12 +1,12 @@
 package main
 
-type Node struct {
-	pavl_link [3]*Node /* Subtrees. */
+type node struct {
+	pavl_link [3]*node /* Subtrees. */
 	keybal    [32]byte
 	pavl_data * /* value itself. */
 }
 
-func Pad(v []byte) []byte {
+func pad(v []byte) []byte {
 	var o [31]byte
 	for i := 0; i < 31; i++ {
 		o[i] = ' '
@@ -28,11 +28,11 @@ func bytecompare(a, b []byte) (o int) {
 	return 0
 }
 
-func Probe(value *, tree **Node, key []byte, result **) {
-	var y *Node    /* Top node to update balance factor, and parent. */
-	var p, q *Node /* Iterator, and parent. */
-	var n *Node    /* Newly inserted node. */
-	var w *Node    /* New root of rebalanced subtree. */
+func probe(value *, tree **node, key []byte, result **) {
+	var y *node    /* Top node to update balance factor, and parent. */
+	var p, q *node /* Iterator, and parent. */
+	var n *node    /* Newly inserted node. */
+	var w *node    /* New root of rebalanced subtree. */
 
 	var dir int /* Direction to descend. */
 
@@ -61,7 +61,7 @@ func Probe(value *, tree **Node, key []byte, result **) {
 		p = p.pavl_link[dir]
 	}
 
-	n = &Node{}
+	n = &node{}
 	//	if n == nil {
 	//		return nil
 	//	}
@@ -103,7 +103,7 @@ func Probe(value *, tree **Node, key []byte, result **) {
 	}
 
 	if y.keybal[31] == 254 {
-		var x *Node = y.pavl_link[0]
+		var x *node = y.pavl_link[0]
 		if x.keybal[31] == 255 {
 			w = x
 			y.pavl_link[0] = x.pavl_link[1]
@@ -146,7 +146,7 @@ func Probe(value *, tree **Node, key []byte, result **) {
 			}
 		}
 	} else if y.keybal[31] == +2 {
-		var x *Node = y.pavl_link[1]
+		var x *node = y.pavl_link[1]
 		if x.keybal[31] == +1 {
 			w = x
 			y.pavl_link[1] = x.pavl_link[0]
@@ -211,10 +211,10 @@ func Probe(value *, tree **Node, key []byte, result **) {
 
 /* Deletes from |tree| and returns an item matching |item|.
    Returns a null pointer if no matching item found. */
-func Drop(result **, tree **Node, key []byte) {
+func drop(result **, tree **node, key []byte) {
 
-	var p *Node /* Traverses tree to find node to delete. */
-	var q *Node /* Parent of |p|. */
+	var p *node /* Traverses tree to find node to delete. */
+	var q *node /* Parent of |p|. */
 	var dir int /* Side of |q| on which |p| is linked. */
 
 	if !(tree != nil) {
@@ -265,7 +265,7 @@ func Drop(result **, tree **Node, key []byte) {
 			q.pavl_link[dir].pavl_link[2] = p.pavl_link[2]
 		}
 	} else {
-		var r *Node = p.pavl_link[1]
+		var r *node = p.pavl_link[1]
 		if r.pavl_link[0] == nil {
 			r.pavl_link[0] = p.pavl_link[0]
 			q.pavl_link[dir] = r
@@ -277,7 +277,7 @@ func Drop(result **, tree **Node, key []byte) {
 			q = r
 			dir = 1
 		} else {
-			var s *Node = r.pavl_link[0]
+			var s *node = r.pavl_link[0]
 			for s.pavl_link[0] != nil {
 				s = s.pavl_link[0]
 			}
@@ -308,7 +308,7 @@ func Drop(result **, tree **Node, key []byte) {
 	//  tree.pavl_alloc.libavl_free (tree.pavl_alloc, p);
 
 	for q != *tree {
-		var y *Node = q
+		var y *node = q
 
 		if y.pavl_link[2] != nil {
 			q = y.pavl_link[2]
@@ -326,9 +326,9 @@ func Drop(result **, tree **Node, key []byte) {
 			if y.keybal[31] == +1 {
 				break
 			} else if y.keybal[31] == +2 {
-				var x *Node = y.pavl_link[1]
+				var x *node = y.pavl_link[1]
 				if x.keybal[31] == 255 {
-					var w *Node
+					var w *node
 
 					if !(x.keybal[31] == 255) {
 						panic("assert")
@@ -389,9 +389,9 @@ func Drop(result **, tree **Node, key []byte) {
 			if y.keybal[31] == 255 {
 				break
 			} else if y.keybal[31] == 254 {
-				var x *Node = y.pavl_link[0]
+				var x *node = y.pavl_link[0]
 				if x.keybal[31] == +1 {
-					var w *Node
+					var w *node
 					if !(x.keybal[31] == +1) {
 						panic("assert")
 					}
@@ -449,9 +449,9 @@ func Drop(result **, tree **Node, key []byte) {
 }
 
 // Visits tree values in sequence
-func Preorder(unused *, tree **Node, visit func(*)) {
+func preorder(unused *, tree **node, visit func(*)) {
 
-	var p *Node /* Iterator. */
+	var p *node /* Iterator. */
 
 	p = *tree
 	if p == nil {
@@ -461,7 +461,7 @@ func Preorder(unused *, tree **Node, visit func(*)) {
 	if p.pavl_link[0] != nil {
 
 		p = p.pavl_link[0]
-		Preorder(unused, &p, visit)
+		preorder(unused, &p, visit)
 		p = p.pavl_link[2]
 	}
 
@@ -472,44 +472,44 @@ func Preorder(unused *, tree **Node, visit func(*)) {
 	if p.pavl_link[1] != nil {
 
 		p = p.pavl_link[1]
-		Preorder(unused, &p, visit)
+		preorder(unused, &p, visit)
 		p = p.pavl_link[2]
 	}
 }
 
 //-ClienT C0DE--------------------
 
-type MyValue struct {
+type myValue struct {
 	str string
 }
 
-type StringNode struct {
-	pavl_link [3]*StringNode /* Subtrees. */
+type stringnode struct {
+	pavl_link [3]*stringnode /* Subtrees. */
 	keybal    [32]byte
-	pavl_data *MyValue /* value itself. */
+	pavl_data *myValue /* value itself. */
 }
 
 func main() {
-	var null **MyValue
-	var nill *MyValue
-	var root *StringNode
+	var null **myValue
+	var nill *myValue
+	var root *stringnode
 
-	Probe(&MyValue{"Paul Sartorius"}, &root, Pad([]byte("composer")), nil)
-	Probe(&MyValue{"Elkanah Settle"}, &root, Pad([]byte("writer")), nil)
-	Probe(&MyValue{"Edie Martin"}, &root, Pad([]byte("actress")), nil)
-	Probe(&MyValue{"Walter de Stapledon"}, &root, Pad([]byte("bishop")), nil)
-	Probe(&MyValue{"Blake Ross"}, &root, Pad([]byte("developer")), nil)
-	Probe(&MyValue{"Cicely Saunders"}, &root, Pad([]byte("nurse")), nil)
-	Probe(&MyValue{"Bob Sweikert"}, &root, Pad([]byte("driver")), nil)
-	Probe(&MyValue{"Peter Godfrey"}, &root, Pad([]byte("accountant")), nil)
-	Probe(&MyValue{"Pam Beesley"}, &root, Pad([]byte("receptionist")), nil)
-	Probe(&MyValue{"Valdemar Poulsen"}, &root, Pad([]byte("engineer")), nil)
-	Probe(&MyValue{"Bucky Harris"}, &root, Pad([]byte("manager")), nil)
-	Probe(&MyValue{"Carl W Scheele"}, &root, Pad([]byte("pharmacist")), nil)
-	Probe(&MyValue{"Tim Cook"}, &root, Pad([]byte("cook")), nil)
-	Probe(&MyValue{"David Griswold"}, &root, Pad([]byte("cashier")), nil)
+	probe(&myValue{"Paul Sartorius"}, &root, pad([]byte("composer")), nil)
+	probe(&myValue{"Elkanah Settle"}, &root, pad([]byte("writer")), nil)
+	probe(&myValue{"Edie Martin"}, &root, pad([]byte("actress")), nil)
+	probe(&myValue{"Walter de Stapledon"}, &root, pad([]byte("bishop")), nil)
+	probe(&myValue{"Blake Ross"}, &root, pad([]byte("developer")), nil)
+	probe(&myValue{"Cicely Saunders"}, &root, pad([]byte("nurse")), nil)
+	probe(&myValue{"Bob Sweikert"}, &root, pad([]byte("driver")), nil)
+	probe(&myValue{"Peter Godfrey"}, &root, pad([]byte("accountant")), nil)
+	probe(&myValue{"Pam Beesley"}, &root, pad([]byte("receptionist")), nil)
+	probe(&myValue{"Valdemar Poulsen"}, &root, pad([]byte("engineer")), nil)
+	probe(&myValue{"Bucky Harris"}, &root, pad([]byte("manager")), nil)
+	probe(&myValue{"Carl W Scheele"}, &root, pad([]byte("pharmacist")), nil)
+	probe(&myValue{"Tim Cook"}, &root, pad([]byte("cook")), nil)
+	probe(&myValue{"David Griswold"}, &root, pad([]byte("cashier")), nil)
 
-	Preorder(nill, &root, func(value *MyValue) {
+	preorder(nill, &root, func(value *myValue) {
 		print(value.str)
 		print("\n")
 	})
@@ -517,10 +517,10 @@ func main() {
 
 
 
-	Drop(null, &root, Pad([]byte("accountant")))
-	Drop(null, &root, Pad([]byte("developer")))
+	drop(null, &root, pad([]byte("accountant")))
+	drop(null, &root, pad([]byte("developer")))
 
-	Preorder(nill, &root, func(value *MyValue) {
+	preorder(nill, &root, func(value *myValue) {
 		print(value.str)
 		print("\n")
 	})

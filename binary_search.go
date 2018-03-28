@@ -2,7 +2,7 @@ package main
 
 import "math"
 
-func Search(buf [], goal *, compare func(*,*)int, fromInclusive int, toExclusive int) int {
+func search(buf [], goal *, compare func(*,*)int, fromInclusive int, toExclusive int) int {
 	if len (buf) == 0 {
 		return -1
 	}
@@ -30,8 +30,8 @@ func Search(buf [], goal *, compare func(*,*)int, fromInclusive int, toExclusive
 	return hi;
 }
 
-// Float32 compares two numbers.
-func Float32(a, b *float32) int {
+// float compares two numbers.
+func float(a, b *float32) int {
 	r := *a - *b
 	rr := int32(math.Float32bits(r))
 	return int(rr)
@@ -42,7 +42,7 @@ func main() {
 
 	var target float32 = 16.9
 
-	var off = Search(buffer, &target, Float32, 0, len(buffer))
+	var off = search(buffer, &target, float, 0, len(buffer))
 	_ = off
 	println(off)
 	println(buffer[off])

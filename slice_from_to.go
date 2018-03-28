@@ -44,7 +44,7 @@ func my_string_to_int(s string, out *int) {
 
 	i, err := strconv.Atoi(s)
 	if (err != nil) {
-		*out = nil
+		*out = -1
 	} else {
 		*out = i
 	}

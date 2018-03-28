@@ -1,6 +1,10 @@
 package main
 
-func ForEachKey(hash func(*,int) uint64, keys [], do func(*, int)) {
+type inserter func(int,int)
+type selector int
+
+
+func forEachKey(hash func(*,int) uint64, keys [], do func(*, int)) {
 
 	var void uint64
 
@@ -27,22 +31,10 @@ func ForEachKey(hash func(*,int) uint64, keys [], do func(*, int)) {
 
 }
 
-func hashfun(key *[8]byte, size int) (o uint64) {
-	o |= uint64(key[0])
-	o |= uint64(key[1]) << 8 
-	o |= uint64(key[2]) << 16 
-	o |= uint64(key[3]) << 24
-	o |= uint64(key[4]) << 32
-	o |= uint64(key[5]) << 40
-	o |= uint64(key[6]) << 48
-	o |= uint64(key[7]) << 56
-	return o % uint64(size)
 
-}
 
-type Selector int
 
-func Select(hash func(*, int) uint64, key *, table []) Selector {
+func slect(hash func(*, int) uint64, key *, table []) selector {
 
 	// next we look if the slot is occupied
 
@@ -58,7 +50,7 @@ func Select(hash func(*, int) uint64, key *, table []) Selector {
 	var hkey = hash(key, -1)
 
 	if hloc == hkey {
-		return Selector(int(slot))
+		return selector(int(slot))
 	}
 
 	return -1
@@ -66,12 +58,12 @@ func Select(hash func(*, int) uint64, key *, table []) Selector {
 
 // Fast Search when you know the key exists
 // If unsure, use Select
-func Fetch(hash func(*, int) uint64, key *, table []) Selector {
-	return Selector(int(hash(key, len(table))))
+func fetch(hash func(*, int) uint64, key *, table []) selector {
+	return selector(int(hash(key, len(table))))
 }
 
 
-func (f Selector) From(values []) * {
+func (f selector) from(values []) * {
 	if f == -1 {
 		return nil
 	}
@@ -80,10 +72,23 @@ func (f Selector) From(values []) * {
 }
 
 
-type Inserter func(int,int)
 
 
-func (f Inserter) Into(hash func(*, int) uint64, key *, table *[]) {
+
+func hashfun(key *[8]byte, size int) (o uint64) {
+	o |= uint64(key[0])
+	o |= uint64(key[1]) << 8 
+	o |= uint64(key[2]) << 16 
+	o |= uint64(key[3]) << 24
+	o |= uint64(key[4]) << 32
+	o |= uint64(key[5]) << 40
+	o |= uint64(key[6]) << 48
+	o |= uint64(key[7]) << 56
+	return o % uint64(size)
+
+}
+
+func (f inserter) into(hash func(*, int) uint64, key *, table *[]) {
 
 	const grow_by = 15
 
@@ -186,22 +191,20 @@ func (f Inserter) Into(hash func(*, int) uint64, key *, table *[]) {
 	f(0,-2)
 
 
-	f.Into(hash, key, table)
+	f.into(hash, key, table)
 }
 
-func Insert(value *, values *[]) Inserter {
+func insert(value *, values *[]) inserter {
 
 	var oldvalues []
-
+	_ = oldvalues
 
 	const resizeValues = -1	// save the old and make a new values array
 	const deleteValues = -2	// clean the old (saved) values array
 	const emptyElement = -3 // puts an empty element to slot in values array
 	const addedElement = -4 // puts the inserted value to a slot in values
 
-
-	return Inserter( func(dst int, src int) {
-
+	return inserter( func(dst int, src int) {
 
 
 		var dstp *;
@@ -220,6 +223,7 @@ func Insert(value *, values *[]) Inserter {
 		case emptyElement:
 			var void [];
 			void = make([], 1)
+			_ = void
 			srcp = &void[0]
 			dstp = &(*values)[dst]
 		case addedElement:
@@ -238,6 +242,7 @@ func Insert(value *, values *[]) Inserter {
 	})
 
 
+
 }
 
 
@@ -250,19 +255,19 @@ func main() {
 
 	var test = [2]uintptr{1337,7331}
 
-	Insert(&test, &values).Into(hashfun, &[8]byte{2,6,7,8,3,2,1,0}, &keys)
-	Insert(&test, &values).Into(hashfun, &[8]byte{2,6,7,8,3,2,1,0}, &keys)
-	Insert(&test, &values).Into(hashfun, &[8]byte{2,6,7,8,3,2,1,1}, &keys)
-	Insert(&test, &values).Into(hashfun, &[8]byte{2,6,7,8,3,2,1,2}, &keys)
-	Insert(&test, &values).Into(hashfun, &[8]byte{2,6,7,8,3,2,1,3}, &keys)
-	Insert(&test, &values).Into(hashfun, &[8]byte{2,6,7,8,3,2,1,4}, &keys)
-	Insert(&test, &values).Into(hashfun, &[8]byte{1,3,8,5,4,9,5,3}, &keys)
+	insert(&test, &values).into(hashfun, &[8]byte{2,6,7,8,3,2,1,0}, &keys)
+	insert(&test, &values).into(hashfun, &[8]byte{2,6,7,8,3,2,1,0}, &keys)
+	insert(&test, &values).into(hashfun, &[8]byte{2,6,7,8,3,2,1,1}, &keys)
+	insert(&test, &values).into(hashfun, &[8]byte{2,6,7,8,3,2,1,2}, &keys)
+	insert(&test, &values).into(hashfun, &[8]byte{2,6,7,8,3,2,1,3}, &keys)
+	insert(&test, &values).into(hashfun, &[8]byte{2,6,7,8,3,2,1,4}, &keys)
+	insert(&test, &values).into(hashfun, &[8]byte{1,3,8,5,4,9,5,3}, &keys)
 
 	for i := 0; i < 250; i++ {
 
 		var oldsize = len(keys)
 
-		Insert(&test, &values).Into(hashfun, &[8]byte{1,3,8,5,4,9,5,byte(i)}, &keys)
+		insert(&test, &values).into(hashfun, &[8]byte{1,3,8,5,4,9,5,byte(i)}, &keys)
 
 		if oldsize != len(keys) {
 
@@ -275,7 +280,7 @@ func main() {
 
 	println("Here.")
 
-	ForEachKey(hashfun, keys, func(key *[8]byte, i int) {
+	forEachKey(hashfun, keys, func(key *[8]byte, i int) {
 
 		print(i)
 
@@ -283,15 +288,20 @@ func main() {
 		print(values[i][0])
 		print("  ")
 	})
+
 	println("")
 	println("Searching.")
 
-	var a *[2]uintptr = Select(hashfun, &[8]byte{1,3,8,5,4,9,5,20}, keys).From(values)
+	var a = slect(hashfun, &[8]byte{1,3,8,5,4,9,5,20}, keys).from(values)
 
-	print((*a)[0])
-	println((*a)[1])
+	var b *[2]uintptr = a
 
-	if nil == Select(hashfun, &[8]byte{0,0,0,0,1,0,0,1}, keys).From(values) {
+	print((*b)[0])
+	println((*b)[1])
+
+	_ = a
+
+	if nil == slect(hashfun, &[8]byte{0,0,0,0,1,0,0,1}, keys).from(values) {
 		println("not found")
 	}
 

@@ -1,10 +1,10 @@
 package main
 
-func CompareInt(a *int, b *int) int {
+func compareInt(a *int, b *int) int {
 	return (*a) - (*b)
 }
 
-func Sort(base [], cmp_func func (*, *) int) {
+func sort(base [], cmp_func func (*, *) int) {
 
 	var tmp []
 	var pt *;
@@ -74,7 +74,7 @@ func main() {
 	var buf = []int {984,135,651,897,648,412,741,151,944,841,254,825,985,981,785}
 
 
-	Sort(buf, CompareInt)
+	sort(buf, compareInt)
 
 	for i := range buf {
 		println(buf[i])

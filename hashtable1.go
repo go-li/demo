@@ -2,7 +2,7 @@ package main
 
 const hops = 255
 
-func ForEachKey(hash func(*,int) uint64, keys [], do func(*, int)) {
+func forEachKey(hash func(*,int) uint64, keys [], do func(*, int)) {
 
 	var void uint64
 
@@ -57,9 +57,9 @@ func hashfn(key *int, size int) (o uint64) {
 }
 
 
-type Selector int
+type selector int
 
-func (f Selector) Remove(table []) (Selector) {
+func (f selector) Remove(table []) selector {
 
 	if f == -1 {
 		return -1
@@ -79,7 +79,7 @@ func (f Selector) Remove(table []) (Selector) {
 	return f
 }
 
-func Select(hash func(*, int) uint64, key *, table []) Selector {
+func slect(hash func(*, int) uint64, key *, table []) selector {
 
 	if key == nil {
 		return -1;
@@ -99,7 +99,7 @@ func Select(hash func(*, int) uint64, key *, table []) Selector {
 	var hkey = hash(key, -1)
 
 	if hloc == hkey {
-		return Selector(int(slot))
+		return selector(int(slot))
 	}
 
 	for j := 0; j < hops; j++ {
@@ -115,7 +115,7 @@ func Select(hash func(*, int) uint64, key *, table []) Selector {
 	// if it's occupied by a key
 
 	if hloc == hkey {
-		return Selector(int(slot))
+		return selector(int(slot))
 	}
 
 	}
@@ -124,7 +124,7 @@ func Select(hash func(*, int) uint64, key *, table []) Selector {
 	return -1
 }
 
-func (f Selector) From(values []) * {
+func (f selector) from(values []) * {
 	if f == -1 {
 		return nil
 	}
@@ -132,9 +132,9 @@ func (f Selector) From(values []) * {
 	return &values[f]
 }
 
-// Fetch is like Select(..)From(..) but the key table pointer is returned
-// Fetch cannot fetch values from the values slice
-func Fetch(hash func(*, int) uint64, key *, table []) * {
+// fetch is like slect(..)from(..) but the key table pointer is returned
+// fetch cannot fetch values from the values slice
+func fetch(hash func(*, int) uint64, key *, table []) * {
 
 //	if key == nil {
 ///		return nil
@@ -180,7 +180,7 @@ func Fetch(hash func(*, int) uint64, key *, table []) * {
 }
 
 
-type Inserter func(int,int)
+type inserter func(int,int)
 
 // n is a "prime number" from the sequence 251,491,971...
 func grow(n int) int {
@@ -194,7 +194,7 @@ func grow(n int) int {
 }
 
 
-func (f Inserter) Into(hash func(*, int) uint64, key *, table *[]) {
+func (f inserter) into(hash func(*, int) uint64, key *, table *[]) {
 
 
 	if len(*table) == 0 {
@@ -391,7 +391,7 @@ func (f Inserter) Into(hash func(*, int) uint64, key *, table *[]) {
 }
 
 
-func Insert(value *, values *[]) Inserter {
+func insert(value *, values *[]) inserter {
 
 	if value == nil {
 		return nil
@@ -406,7 +406,7 @@ func Insert(value *, values *[]) Inserter {
 	const addedElement = -4 // puts the inserted value to a slot in values
 
 
-	return Inserter( func(dst int, src int) {
+	return inserter( func(dst int, src int) {
 
 
 
@@ -541,12 +541,12 @@ func kvhfunc(key *keyval, modulo int) (o uint64) {
 
 
 
-type Vacuumer func(int,int)
+type vacuumer func(int,int)
 
-func (f Vacuumer) Table(hash func(*, int) uint64, table [], accuracy byte) (displaced int) {
+func (f vacuumer) Table(hash func(*, int) uint64, table [], accuracy byte) (displaced int) {
 
 	if (accuracy < 1) || (accuracy > 8) {
-		panic("Vacuum accuracy should be small: 1,2,3,4 etc")
+		panic("vacuum accuracy should be small: 1,2,3,4 etc")
 	}
 	accuracy = (1 << accuracy) - 1
 
@@ -896,10 +896,10 @@ func (f Vacuumer) Table(hash func(*, int) uint64, table [], accuracy byte) (disp
 	return displaced
 }
 
-func Vacuum(values []) Vacuumer {
+func vacuum(values []) vacuumer {
 
 	if len(values) == 0 {
-		return Vacuumer( func(dst int, src int) {
+		return vacuumer( func(dst int, src int) {
 
 		})
 	}
@@ -907,7 +907,7 @@ func Vacuum(values []) Vacuumer {
 	var putaway []
 	putaway = make([], 1)
 
-	return Vacuumer( func(dst int, src int) {
+	return vacuumer( func(dst int, src int) {
 		var dstp *;
 		var srcp *;
 
@@ -953,9 +953,9 @@ func bubble(array [][2]int) {
 	}
 }
 
-type Deletor func(int,int)
+type deletor func(int,int)
 
-func Delete(values []) Deletor {
+func delet(values []) deletor {
 
 	if len(values) == 0 {
 		return func(int,int){}
@@ -975,7 +975,7 @@ func Delete(values []) Deletor {
 	}
 }
 
-func (d Deletor) From(hash func(*, int) uint64, key *, table []) {
+func (d deletor) from(hash func(*, int) uint64, key *, table []) {
 
 	var empty [];
 	empty = make([], 1)
@@ -1081,19 +1081,19 @@ func main() {
 
 	var test = [2]uintptr{1337,7331}
 
-	Insert(&test, &values).Into(hashfun, &[8]byte{2,6,7,8,3,2,1,0}, &keys)
-	Insert(&test, &values).Into(hashfun, &[8]byte{2,6,7,8,3,2,1,0}, &keys)
-	Insert(&test, &values).Into(hashfun, &[8]byte{2,6,7,8,3,2,1,1}, &keys)
-	Insert(&test, &values).Into(hashfun, &[8]byte{2,6,7,8,3,2,1,2}, &keys)
-	Insert(&test, &values).Into(hashfun, &[8]byte{2,6,7,8,3,2,1,3}, &keys)
-	Insert(&test, &values).Into(hashfun, &[8]byte{2,6,7,8,3,2,1,4}, &keys)
-	Insert(&test, &values).Into(hashfun, &[8]byte{1,3,8,5,4,9,5,3}, &keys)
+	insert(&test, &values).into(hashfun, &[8]byte{2,6,7,8,3,2,1,0}, &keys)
+	insert(&test, &values).into(hashfun, &[8]byte{2,6,7,8,3,2,1,0}, &keys)
+	insert(&test, &values).into(hashfun, &[8]byte{2,6,7,8,3,2,1,1}, &keys)
+	insert(&test, &values).into(hashfun, &[8]byte{2,6,7,8,3,2,1,2}, &keys)
+	insert(&test, &values).into(hashfun, &[8]byte{2,6,7,8,3,2,1,3}, &keys)
+	insert(&test, &values).into(hashfun, &[8]byte{2,6,7,8,3,2,1,4}, &keys)
+	insert(&test, &values).into(hashfun, &[8]byte{1,3,8,5,4,9,5,3}, &keys)
 
 	for i := 0; i < 250; i++ {
 
 		var oldsize = len(keys)
 
-		Insert(&test, &values).Into(hashfun, &[8]byte{1,3,8,5,4,9,5,byte(i)}, &keys)
+		insert(&test, &values).into(hashfun, &[8]byte{1,3,8,5,4,9,5,byte(i)}, &keys)
 
 		if oldsize != len(keys) {
 
@@ -1106,7 +1106,7 @@ func main() {
 
 	println("Here.")
 
-	ForEachKey(hashfun, keys, func(key *[8]byte, i int) {
+	forEachKey(hashfun, keys, func(key *[8]byte, i int) {
 
 		print(i)
 
@@ -1117,12 +1117,12 @@ func main() {
 	println("")
 	println("Searching.")
 
-	var a *[2]uintptr = Select(hashfun, &[8]byte{1,3,8,5,4,9,5,20}, keys).From(values)
+	var a *[2]uintptr = slect(hashfun, &[8]byte{1,3,8,5,4,9,5,20}, keys).from(values)
 
 	print((*a)[0])
 	println((*a)[1])
 
-	if nil == Select(hashfun, &[8]byte{0,0,0,0,1,0,0,1}, keys).From(values) {
+	if nil == slect(hashfun, &[8]byte{0,0,0,0,1,0,0,1}, keys).from(values) {
 		println("not found")
 	}
 
@@ -1138,7 +1138,9 @@ func main() {
 	var lenkeys = len(keyz)
 	_ = lenkeys
 
-	Insert(&i, &vals).Into(hashfn, &i, &keyz)
+	var j int = i
+
+	insert(&j, &vals).into(hashfn, &j, &keyz)
 
 	if lenkeys != len(keyz) {
 
@@ -1159,12 +1161,12 @@ func main() {
 	}
 	}
 
-	println(Vacuum(vals).Table(hashfn, keyz, 4))
+	println(vacuum(vals).Table(hashfn, keyz, 4))
 
-	Delete(vals).From(hashfn, &[]int{10}[0], keyz)
+	delet(vals).from(hashfn, &[]int{10}[0], keyz)
 
 	for i := 5; i < 15; i++ {
-		var v *int = Select(hashfn, &i, keyz).From(vals)
+		var v *int = slect(hashfn, &i, keyz).from(vals)
 		print(i)
 		print(" ")
 		if v == nil {println("nil");} else {
@@ -1226,7 +1228,7 @@ func main() {
 	var lenkeys = len(kval)
 	_ = lenkeys
 
-	Insert(nil, &kval).Into(kvhfunc, &keyval{i,i}, &kval)
+	insert(nil, &kval).into(kvhfunc, &keyval{i,i}, &kval)
 
 	if lenkeys != len(kval) {
 
@@ -1250,12 +1252,12 @@ func main() {
 	}
 */
 /*
-	Select(kvhfunc, &keyval{key:11}, kval).Remove(kval)
+	slect(kvhfunc, &keyval{key:11}, kval).Remove(kval)
 
 	for i := 2; i < 300; i++ {
 
 
-		var a *keyval = Select(kvhfunc, &keyval{key:i}, kval).From(kval)
+		var a *keyval = slect(kvhfunc, &keyval{key:i}, kval).from(kval)
 
 		if a == nil {
 		println("- -")
@@ -1270,8 +1272,8 @@ func main() {
 	// VACUUM
 
 
-//	println(Vacuum([]struct{}{}).Table(kvhfunc, kval))
-//	println(Vacuum([]struct{}{}).Table(kvhfunc, kval))
+//	println(vacuum([]struct{}{}).Table(kvhfunc, kval))
+//	println(vacuum([]struct{}{}).Table(kvhfunc, kval))
 
 /*
 	for i := range kval {
@@ -1287,15 +1289,15 @@ func main() {
 
 	for j := 500000; j < 1000000; j++ {
 
-		Delete([]struct{}{}).From(kvhfunc, &keyval{key:j}, kval)
+		delet([]struct{}{}).from(kvhfunc, &keyval{key:j}, kval)
 	}
 
-	println(Vacuum([]struct{}{}).Table(kvhfunc, kval, 1))
+	println(vacuum([]struct{}{}).Table(kvhfunc, kval, 1))
 /*	{
 		var tmp []keyval
 
-		ForEachKey(kvhfunc, kval, func(p *keyval, o int) {
-			Insert(nil, &tmp).Into(kvhfunc, p, &tmp)
+		forEachKey(kvhfunc, kval, func(p *keyval, o int) {
+			insert(nil, &tmp).into(kvhfunc, p, &tmp)
 		})
 		kval = tmp
 		tmp = nil
@@ -1303,17 +1305,17 @@ func main() {
 */
 	for j := 500000; j < 1439470; j++ {
 
-	Insert(nil, &kval).Into(kvhfunc, &keyval{j,j}, &kval)
+	insert(nil, &kval).into(kvhfunc, &keyval{j,j}, &kval)
 
 	}
 
-	println(Vacuum([]struct{}{}).Table(kvhfunc, kval, 4))
+	println(vacuum([]struct{}{}).Table(kvhfunc, kval, 4))
 /*
 	{
 		var tmp []keyval
 
-		ForEachKey(kvhfunc, kval, func(p *keyval, o int) {
-			Insert(nil, &tmp).Into(kvhfunc, p, &tmp)
+		forEachKey(kvhfunc, kval, func(p *keyval, o int) {
+			insert(nil, &tmp).into(kvhfunc, p, &tmp)
 		})
 		kval = tmp
 		tmp = nil
@@ -1326,7 +1328,7 @@ func main() {
 
 		key.key = i
 
-		var a *keyval = Fetch(kvhfunc, &key, kval)
+		var a *keyval = fetch(kvhfunc, &key, kval)
 
 		if a == nil {
 			println(i)

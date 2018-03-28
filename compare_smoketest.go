@@ -1,10 +1,10 @@
 package main
 
-func Int(a, b *int) int {
+func integer(a, b *int) int {
 	return *a - *b
 }
 
-func String(a, b *string) int {
+func str(a, b *string) int {
 	sa := *a
 	sb := *b
 	for i := 0; (i < len(sa)) && (i < len(sb)); i++ {
@@ -15,11 +15,11 @@ func String(a, b *string) int {
 	return 0
 }
 
-func Compare2(cmp func(*,*)(int), l *,r *) {
-	println(What(cmp(l,r)))
+func compare2(cmp func(*,*)(int), l *,r *) {
+	println(what(cmp(l,r)))
 }
 
-func What(n int) string {
+func what(n int) string {
 	if n == 0 {
 		return "same"
 	} else if n > 0 {
@@ -34,9 +34,9 @@ func main() {
 	var one = 1
 	var two = 2
 	
-	Compare2(String, &s[0], &s[1])
-	Compare2(String, &s[2], &s[3])
-	Compare2(String, &s[4], &s[5])
-	Compare2(String, &s[6], &s[7])
-	Compare2(Int, &one, &two)
+	compare2(str, &s[0], &s[1])
+	compare2(str, &s[2], &s[3])
+	compare2(str, &s[4], &s[5])
+	compare2(str, &s[6], &s[7])
+	compare2(integer, &one, &two)
 }

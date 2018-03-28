@@ -4,7 +4,7 @@ package main
 const Prev = 0
 const Next = 1
 
-func Insert (list **, link func(*) *[2]*, elm *) {
+func insert (list **, link func(*) *[2]*, elm *) {
 	if nil == *list {
 		*list = elm
 		(*link(elm))[Prev] = elm
@@ -21,7 +21,7 @@ func Insert (list **, link func(*) *[2]*, elm *) {
 }
 
 // add adds element to a list another element is already member of
-func Add(already *, link func(*) *[2]*, elm *) {
+func add(already *, link func(*) *[2]*, elm *) {
 	if (*link(already))[Prev] == nil || (*link(already))[Next] == nil {
 		panic("Already is not already in the list")
 	}
@@ -31,7 +31,7 @@ func Add(already *, link func(*) *[2]*, elm *) {
 	(*link( (*link(elm))[Next] ))[Prev] = elm
 }
 
-func Remove(list **, link func(*) *[2]*, elm *) {
+func remove(list **, link func(*) *[2]*, elm *) {
 	if *list == elm {
 		if (*link(elm))[Prev] == elm {
 			*list = nil
@@ -47,12 +47,12 @@ finally:
 	(*link(elm))[Next] = nil
 }
 
-func Empty(list **, link func(*) *[2]*) bool {
+func empty(list **, link func(*) *[2]*) bool {
 	return nil == *list
 }
 
 // do count of the list items
-func Len(list **, link func(*) *[2]*) (count int) {
+func length(list **, link func(*) *[2]*) (count int) {
 
 	if nil == *list {
 		return 0
@@ -70,7 +70,7 @@ func Len(list **, link func(*) *[2]*) (count int) {
 }
 
 // apply function to all link elements
-func Foreach(direction byte, list **, link func(*) *[2]*, f func(*)) {
+func foreach(direction byte, list **, link func(*) *[2]*, f func(*)) {
 
 	if nil == *list {
 		return
@@ -110,62 +110,62 @@ func main() {
 	var c item
 	var d item
 
-	print("len=");println(Len(&a, item_link))
+	print("len=");println(length(&a, item_link))
 
-	Insert(&a, item_link, &b)
+	insert(&a, item_link, &b)
 
-	print("len=");println(Len(&a, item_link))
+	print("len=");println(length(&a, item_link))
 	print("a=");println(a)
 
-	Insert(&a, item_link, &c)
+	insert(&a, item_link, &c)
 
-	print("len=");println(Len(&a, item_link))
+	print("len=");println(length(&a, item_link))
 	print("a=");println(a)
 
-	Add(&c, item_link, &d)
+	add(&c, item_link, &d)
 
-	print("len=");println(Len(&a, item_link))
+	print("len=");println(length(&a, item_link))
 	print("a=");println(a)
 
-	Remove(&a, item_link, &d)
+	remove(&a, item_link, &d)
 
-	print("len=");println(Len(&a, item_link))
+	print("len=");println(length(&a, item_link))
 	print("a=");println(a)
 
-	Remove(&a, item_link, &b)
+	remove(&a, item_link, &b)
 
-	print("len=");println(Len(&a, item_link))
+	print("len=");println(length(&a, item_link))
 	print("a=");println(a)
 
-	Remove(&a, item_link, &c)
+	remove(&a, item_link, &c)
 
-	print("len=");println(Len(&a, item_link))
+	print("len=");println(length(&a, item_link))
 	print("a=");println(a)
 
-	Insert(&a, item_link, &b)
+	insert(&a, item_link, &b)
 
-	print("len=");println(Len(&a, item_link))
+	print("len=");println(length(&a, item_link))
 	print("a=");println(a)
 
-	Insert(&a, item_link, &c)
+	insert(&a, item_link, &c)
 
-	print("len=");println(Len(&a, item_link))
+	print("len=");println(length(&a, item_link))
 	print("a=");println(a)
 
-	Add(&c, item_link, &d)
+	add(&c, item_link, &d)
 
-	print("len=");println(Len(&a, item_link))
+	print("len=");println(length(&a, item_link))
 	print("a=");println(a)
 
-	Foreach(Next, &a, item_link, func(i *item) {
-	print("i=");println(i)
+	foreach(Next, &a, item_link, func(i *item) {
+		print("i=");println(i)
 	})
 
 	// Evacuate the list
-	Foreach(Prev, &a, item_link, func(i *item) {
-		Remove(&a, item_link, i)
+	foreach(Prev, &a, item_link, func(i *item) {
+		remove(&a, item_link, i)
 	})
 
-	print("len=");println(Len(&a, item_link))
+	print("len=");println(length(&a, item_link))
 	print("a=");println(a)
 }
